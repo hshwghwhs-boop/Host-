@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BotHost 24/7 — Telegram Bot Cloud Hosting</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar / Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo-box">
+          <span class="logo-icon">⚡</span>
+        </div>
+        <div>
+          <h1 class="brand-title">BotHost <span>24/7</span></h1>
+          <p class="brand-sub">Telegram Bot Cloud Host</p>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="dashboard">
+          <span class="nav-icon">📊</span> Dashboard
+        </button>
+        <button class="nav-item" data-tab="scripts">
+          <span class="nav-icon">🤖</span> Hosted Bots
+        </button>
+        <button class="nav-item" data-tab="approvals">
+          <span class="nav-icon">🛡️</span> Users & Approvals
+        </button>
+        <button class="nav-item" data-tab="broadcast">
+          <span class="nav-icon">📢</span> Broadcast
+        </button>
+        <button class="nav-item" data-tab="console">
+          <span class="nav-icon">💻</span> Live Console
+        </button>
+        <button class="nav-item" data-tab="settings">
+          <span class="nav-icon">⚙️</span> Settings & GitHub
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="host-pill online" id="sidebarStatusPill">
+          <span class="pulse-dot"></span>
+          <span id="sidebarStatusText">24/7 HOST ACTIVE</span>
+        </div>
+        <p class="small-text" id="sidebarUptime">Uptime: 00h 00m 00s</p>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Navigation Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <h2 id="pageTitle">Operations Dashboard</h2>
+          <p class="header-desc">Real-time Telegram Bot polling & script hosting platform</p>
+        </div>
+        <div class="header-actions">
+          <div class="latency-badge" id="latencyBadge">
+            <span class="icon">⚡</span>
+            <span id="latencyText">Ping: -- ms</span>
+          </div>
+          <button class="btn btn-primary" id="toggleHostBtn">
+            <span class="btn-icon">⏸️</span>
+            <span id="toggleHostBtnText">Stop Polling</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB 1: DASHBOARD -->
+      <section class="tab-pane active" id="tab-dashboard">
+        <!-- Hero Identity Card -->
+        <div class="card hero-card">
+          <div class="hero-header">
+            <div>
+              <span class="badge badge-accent">PRIMARY BOT ENGINE</span>
+              <h3 class="bot-name" id="heroBotName">Loading Bot...</h3>
+              <p class="bot-handle" id="heroBotHandle">@loading</p>
+            </div>
+            <div class="hero-status">
+              <span class="status-indicator live" id="botStatusLive">CONNECTED 🟢</span>
+            </div>
+          </div>
+          <div class="hero-token-row">
+            <span class="token-label">Active Bot Token:</span>
+            <input type="password" id="heroTokenDisplay" readonly class="token-input" value="8833720419:AAGXdASdwBFpgbsr0LY1hDGW9kY_hOJ9ksk">
+            <button class="btn btn-sm btn-outline" id="revealTokenBtn">👁️ Show</button>
+            <button class="btn btn-sm btn-outline" id="testTokenBtn">⚡ Test Ping</button>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-top">
+              <span class="metric-title">SYSTEM UPTIME</span>
+              <span class="metric-icon">⏱️</span>
+            </div>
+            <div class="metric-value" id="metricUptime">00:00:00</div>
+            <span class="metric-sub text-success">Continuous 24/7 Loop</span>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-top">
+              <span class="metric-title">PROCESSED UPDATES</span>
+              <span class="metric-icon">📥</span>
+            </div>
+            <div class="metric-value" id="metricUpdates">0</div>
+            <span class="metric-sub text-info">Telegram Long Polling</span>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-top">
+              <span class="metric-title">HOSTED SCRIPTS</span>
+              <span class="metric-icon">📁</span>
+            </div>
+            <div class="metric-value" id="metricScripts">2 Active</div>
+            <span class="metric-sub text-warning" id="metricScriptsSub">Python & Node.js</span>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-top">
+              <span class="metric-title">REGISTERED USERS</span>
+              <span class="metric-icon">👥</span>
+            </div>
+            <div class="metric-value" id="metricUsers">0 Users</div>
+            <span class="metric-sub text-accent">Active in Database</span>
+          </div>
+        </div>
+
+        <!-- Quick Test Commands & Actions -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h4>⚡ Quick Telegram Bot Command Tester</h4>
+            <span class="badge badge-outline">Live Simulator</span>
+          </div>
+          <p class="text-muted mb-3">Simulate bot commands locally or test responses directly from this web interface:</p>
+          <div class="quick-buttons-row">
+            <button class="btn btn-outline" onclick="simulateCommand('/start')">▶️ /start (Welcome)</button>
+            <button class="btn btn-outline" onclick="simulateCommand('/status')">📊 /status (Stats)</button>
+            <button class="btn btn-outline" onclick="simulateCommand('/ping')">⚡ /ping (Latency)</button>
+            <button class="btn btn-outline" onclick="simulateCommand('/updateschannel')">📢 Updates Channel</button>
+            <button class="btn btn-outline" onclick="simulateCommand('/checkfiles')">📂 Check Files</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: HOSTED SCRIPTS / BOTS -->
+      <section class="tab-pane" id="tab-scripts">
+        <div class="section-header">
+          <div>
+            <h3>Hosted Bots & Executable Scripts</h3>
+            <p class="text-muted">Manage Python (.py), Node.js (.js), and ZIP archives running 24/7</p>
+          </div>
+          <button class="btn btn-primary" id="deployScriptBtn">➕ Deploy New Script</button>
+        </div>
+
+        <div class="scripts-list" id="scriptsContainer">
+          <!-- Dynamic Script Cards populated via JS -->
+        </div>
+      </section>
+
+      <!-- TAB 3: APPROVALS & USERS -->
+      <section class="tab-pane" id="tab-approvals">
+        <div class="subtabs-bar">
+          <button class="subtab-btn active" data-subtab="sub-approvals">Pending Approvals</button>
+          <button class="subtab-btn" data-subtab="sub-subscriptions">Subscriptions</button>
+          <button class="subtab-btn" data-subtab="sub-users">Active Users</button>
+        </div>
+
+        <div class="subtab-pane active" id="sub-approvals">
+          <div class="card mt-3">
+            <div class="card-header">
+              <h4>⏳ Pending Approval Queue</h4>
+              <span class="badge badge-warning" id="pendingCountBadge">0 Pending</span>
+            </div>
+            <div id="pendingListContainer">
+              <p class="empty-state">✅ No files awaiting admin approval.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="subtab-pane" id="sub-subscriptions">
+          <div class="card mt-3">
+            <div class="card-header">
+              <h4>💳 Premium Subscriptions Manager</h4>
+              <button class="btn btn-sm btn-primary" id="grantSubBtn">➕ Add Subscription</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>Plan</th>
+                    <th>Expires</th>
+                    <th>Days Left</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="subscriptionsTableBody">
+                  <tr>
+                    <td colspan="5" class="empty-state">No active premium subscriptions.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="subtab-pane" id="sub-users">
+          <div class="card mt-3">
+            <div class="card-header">
+              <h4>👥 Active Telegram Users Directory</h4>
+              <span class="badge badge-accent" id="userCountBadge">0 Users</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Messages</th>
+                    <th>Last Active</th>
+                  </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                  <tr>
+                    <td colspan="5" class="empty-state">No users logged yet. Send /start to the bot!</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: BROADCAST -->
+      <section class="tab-pane" id="tab-broadcast">
+        <div class="card">
+          <div class="card-header">
+            <h4>📢 Broadcast Message to Users</h4>
+            <span class="badge badge-accent">Mass Messenger</span>
+          </div>
+          <p class="text-muted mb-3">Deliver an announcement to all users who have interacted with your Telegram bot:</p>
+
+          <div class="form-group">
+            <label for="broadcastInput">Broadcast Text (Markdown Supported):</label>
+            <textarea id="broadcastInput" rows="5" placeholder="📢 Important Announcement:&#10;&#10;Our bot hosting service is online 24/7!"></textarea>
+          </div>
+
+          <div class="broadcast-actions">
+            <p class="text-muted" id="broadcastTargetCount">Target Recipients: 0 users</p>
+            <button class="btn btn-primary" id="sendBroadcastBtn">🚀 Send Broadcast</button>
+          </div>
+          <div id="broadcastStatus" class="mt-3"></div>
+        </div>
+      </section>
+
+      <!-- TAB 5: LIVE CONSOLE -->
+      <section class="tab-pane" id="tab-console">
+        <div class="card">
+          <div class="card-header">
+            <h4>💻 Real-Time Operations Terminal</h4>
+            <div class="console-tools">
+              <button class="btn btn-sm btn-outline" id="clearConsoleBtn">Clear Console</button>
+              <button class="btn btn-sm btn-outline" id="copyConsoleBtn">Copy Logs</button>
+            </div>
+          </div>
+          <div class="terminal-box" id="terminalOutput">
+            <div class="terminal-line info">[SYSTEM] BotHost 24/7 Terminal Initialized.</div>
+            <div class="terminal-line info">[AUTH] Connecting to Telegram Bot API...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: SETTINGS & GITHUB -->
+      <section class="tab-pane" id="tab-settings">
+        <div class="grid-2col">
+          <!-- Configuration -->
+          <div class="card">
+            <h4>⚙️ Bot Credentials & Limits</h4>
+            <div class="form-group mt-3">
+              <label for="settingsTokenInput">Telegram Bot Token:</label>
+              <input type="text" id="settingsTokenInput" value="8833720419:AAGXdASdwBFpgbsr0LY1hDGW9kY_hOJ9ksk">
+            </div>
+            <div class="form-group">
+              <label for="settingsOwnerId">Owner User ID:</label>
+              <input type="text" id="settingsOwnerId" value="8714511542">
+            </div>
+            <div class="form-group">
+              <label for="settingsAdminId">Admin User ID:</label>
+              <input type="text" id="settingsAdminId" value="8714511542">
+            </div>
+            <div class="form-group">
+              <label for="settingsChannel">Updates Channel:</label>
+              <input type="text" id="settingsChannel" value="@geto_bot_hub">
+            </div>
+            <button class="btn btn-primary mt-3" id="saveSettingsBtn">💾 Save Credentials</button>
+          </div>
+
+          <!-- GitHub Deployment Guide -->
+          <div class="card">
+            <h4>🚀 How to Host on GitHub Pages (Free 24/7)</h4>
+            <p class="text-muted mt-2">You can host this entire web interface directly from GitHub with zero server cost:</p>
+            <ol class="guide-steps">
+              <li><strong>Create a GitHub Repo:</strong> Go to <a href="https://github.com/new" target="_blank">github.com/new</a> and create a public repository (e.g. <code>bothost-web</code>).</li>
+              <li><strong>Push these files:</strong> Upload <code>index.html</code>, <code>style.css</code>, and <code>app.js</code> to the repository.</li>
+              <li><strong>Enable GitHub Pages:</strong> Go to <em>Repo Settings &rarr; Pages &rarr; Source: Deploy from a branch &rarr; Select 'main' / root &rarr; Save</em>.</li>
+              <li><strong>Done!</strong> Your live website URL will be <code>https://&lt;username&gt;.github.io/&lt;repo&gt;/</code> running 24/7!</li>
+            </ol>
+            <div class="tip-box">
+              💡 <strong>Direct Bot API:</strong> The website communicates directly with Telegram Bot API via HTTPS client-side requests, meaning it runs 24/7 on GitHub Pages without requiring paid backend servers!
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Deploy Script Modal -->
+  <div class="modal-overlay" id="scriptModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h4>Deploy New Script</h4>
+        <button class="btn-close" id="closeScriptModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="modalScriptName">File Name (e.g. main.py or bot.js):</label>
+          <input type="text" id="modalScriptName" value="custom_bot.py">
+        </div>
+        <div class="form-group">
+          <label for="modalScriptCode">Script Code:</label>
+          <textarea id="modalScriptCode" rows="8"># -*- coding: utf-8 -*-
+import time
+print("Custom bot started!")
+while True:
+    time.sleep(10)</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancelScriptModal">Cancel</button>
+        <button class="btn btn-primary" id="confirmDeployScript">Deploy & Run</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
