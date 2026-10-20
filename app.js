@@ -228,23 +228,20 @@ function handleTelegramUpdate(update) {
 
   logToConsole(`Message from ${from?.first_name || 'User'} (${from?.id}): ${text || '[File/Media]'}`);
 
-  // Native Telegram Bottom Reply Keyboard
+  // Native Telegram Bottom Reply Keyboard matching screenshot
   const replyKeyboard = {
     keyboard: [
-      [{ text: "▶️ 𝐒ᴛᴀʀᴛ 𝐍ᴏᴡ" }, { text: "⚡ 𝐁ᴏᴛ 𝐒ᴩᴇᴇᴅ" }],
-      [{ text: "📢 𝐔ᴩᴅᴀᴛᴇꜱ 𝐂ʜᴀɴɴᴇʟ" }, { text: "💬 𝐂ᴏɴᴛᴀᴄᴛ 𝐎ᴡɴᴇʀ" }],
-      [{ text: "📂 𝐂ʜᴇᴄᴋ 𝐅ɪʟᴇꜱ" }, { text: "📊 𝐒ᴛᴀᴛɪꜱᴛɪᴄꜱ" }]
+      [{ text: "📢 𝐔ᴩᴅᴀᴛᴇꜱ 𝐂ʜᴀɴɴᴇʟ" }],
+      [{ text: "📤 𝐔ᴩʟᴏᴀᴅ 𝐅ɪʟᴇ" }, { text: "📂 𝐂ʜᴇᴄᴋ 𝐅ɪʟᴇꜱ" }],
+      [{ text: "⚡ 𝐁ᴏᴛ 𝐒ᴩᴇᴇᴅ" }, { text: "📊 𝐒ᴛᴀᴛɪꜱᴛɪᴄꜱ" }],
+      [{ text: "💳 𝐒ᴜʙꜱᴄʀɪᴩᴛɪᴏɴꜱ" }, { text: "📢 𝐁ʀᴏᴀᴅᴄᴀꜱᴛ" }],
+      [{ text: "🔒 𝐋ᴏᴄᴋ 𝐁ᴏᴛ" }, { text: "🟢 𝐑ᴜɴɴɪɴɢ 𝐀ʟʟ 𝐂ᴏᴅᴇ" }],
+      [{ text: "⏳ 𝐏ᴇɴᴅɪɴɢ 𝐅ɪʟᴇꜱ" }, { text: "👑 𝐀ᴅᴍɪɴ 𝐏ᴀɴᴇʟ" }],
+      [{ text: "📞 𝐂ᴏɴᴛᴀᴄᴛ 𝐎ᴡɴᴇʀ" }]
     ],
     resize_keyboard: true,
     one_time_keyboard: false
   };
-
-  if (isOwner) {
-    replyKeyboard.keyboard.push([
-      { text: "📢 𝐁ʀᴏᴀᴅᴄᴀꜱᴛ" },
-      { text: "🛡️ 𝐀ᴅᴍɪɴ 𝐏ᴀɴᴇʟ" }
-    ]);
-  }
 
   // Auto-respond to commands matching screenshot and python script logic
   if (text === '/start' || text === '▶️ 𝐒ᴛᴀʀᴛ 𝐍ᴏᴡ' || text === '/help') {
