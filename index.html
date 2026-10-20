@@ -39,6 +39,9 @@
         <button class="nav-item" data-tab="console">
           <span class="nav-icon">💻</span> Live Console
         </button>
+        <button class="nav-item" data-tab="webhook">
+          <span class="nav-icon">🌐</span> 24/7 Cloud & Webhook
+        </button>
         <button class="nav-item" data-tab="settings">
           <span class="nav-icon">⚙️</span> Settings & GitHub
         </button>
@@ -75,6 +78,18 @@
 
       <!-- TAB 1: DASHBOARD -->
       <section class="tab-pane active" id="tab-dashboard">
+        <!-- 24/7 Cloud Hosting Notice Banner -->
+        <div class="alert-cloud-banner">
+          <div class="alert-cloud-content">
+            <span class="alert-cloud-icon">⚡</span>
+            <div>
+              <div class="alert-cloud-title">Browser Tab vs 24/7 Cloud Host Notice</div>
+              <div class="alert-cloud-desc">Static GitHub Pages runs in this browser tab. To keep your Telegram Bot live <strong>24/7 even after closing your browser or phone</strong>, set up a Free 24/7 Webhook!</div>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="openTab('webhook')">🚀 Setup 24/7 Webhook</button>
+        </div>
+
         <!-- Hero Identity Card -->
         <div class="card hero-card">
           <div class="hero-header">
@@ -276,6 +291,116 @@
           <div class="terminal-box" id="terminalOutput">
             <div class="terminal-line info">[SYSTEM] BotHost 24/7 Terminal Initialized.</div>
             <div class="terminal-line info">[AUTH] Connecting to Telegram Bot API...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: 24/7 CLOUD HOST & WEBHOOK -->
+      <section class="tab-pane" id="tab-webhook">
+        <!-- Explainer Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4>🌐 Telegram Bot 24/7 Cloud Host & Webhook Setup</h4>
+            <span class="badge badge-accent">100% Free Forever</span>
+          </div>
+          <div class="alert-cloud-banner mt-2 mb-3">
+            <div class="alert-cloud-content">
+              <span class="alert-cloud-icon">💡</span>
+              <div>
+                <div class="alert-cloud-title">Kyu Band Ho Jata Hai? (Why does the bot stop when tab is closed?)</div>
+                <div class="alert-cloud-desc">
+                  GitHub Pages sirf ek static website hai. Jab tak aapka browser open rehta hai, bot response karta hai. Browser tab band hote hi JavaScript sleep mode me chala jata hai.<br>
+                  <strong>Solution:</strong> Niche diye gaye <strong>Free Cloudflare Worker (Webhook)</strong> ya <strong>Render.com (Node.js)</strong> ka use karein. Isse Telegram direct cloud me message bhejega aur bot <strong>24/7 online</strong> rahega, chahe aapka phone ya computer band ho!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2col">
+          <!-- Webhook Live Controller -->
+          <div class="card">
+            <h4>⚡ Live Webhook Controller</h4>
+            <p class="text-muted mt-1">Manage your bot's 24/7 webhook directly with Telegram API:</p>
+
+            <div class="webhook-status-card mt-3">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="badge badge-outline">Telegram Webhook Status</span>
+                <span id="webhookLivePill" class="badge badge-outline">Checking...</span>
+              </div>
+              <div class="webhook-status-grid">
+                <div class="webhook-stat-item">
+                  <div class="webhook-stat-label">Active Webhook URL</div>
+                  <div class="webhook-stat-val" id="webhookCurrentUrl">None (Browser Polling Mode)</div>
+                </div>
+                <div class="webhook-stat-item">
+                  <div class="webhook-stat-label">Pending Updates</div>
+                  <div class="webhook-stat-val" id="webhookPendingCount">0</div>
+                </div>
+                <div class="webhook-stat-item">
+                  <div class="webhook-stat-label">Last Error</div>
+                  <div class="webhook-stat-val text-muted" id="webhookLastError">None</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group mt-3">
+              <label for="webhookUrlInput">Enter Your 24/7 Cloudflare Worker / Server URL:</label>
+              <input type="text" id="webhookUrlInput" placeholder="https://bothost-worker.yourname.workers.dev">
+            </div>
+
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="btn btn-primary" id="setWebhookBtn">⚡ Set 24/7 Webhook</button>
+              <button class="btn btn-outline" id="checkWebhookBtn">🔄 Refresh Status</button>
+              <button class="btn btn-outline text-danger" id="deleteWebhookBtn">🛑 Delete Webhook (Browser Mode)</button>
+            </div>
+            <div id="webhookActionStatus" class="mt-2 text-muted small-text"></div>
+          </div>
+
+          <!-- Quick Setup Guide: Cloudflare Worker (100% Free) -->
+          <div class="card">
+            <h4>🚀 Method 1: Cloudflare Worker (1-Minute Setup)</h4>
+            <p class="text-muted mt-1">Cloudflare Workers 100% free hai aur kabhi sleep nahi hota (100,000 requests/day free):</p>
+            <ol class="guide-steps mt-2">
+              <li>Open <a href="https://workers.cloudflare.com" target="_blank" style="color: var(--primary);">workers.cloudflare.com</a> and sign in.</li>
+              <li>Click <strong>Create Application</strong> &rarr; <strong>Create Worker</strong>.</li>
+              <li>Click <strong>Deploy</strong>, then <strong>Edit code</strong>.</li>
+              <li>Paste the ready-made code below and click <strong>Deploy</strong>.</li>
+              <li>Copy your Worker URL (e.g. <code>https://my-bot.workers.dev</code>), paste in the box on the left, and click <strong>Set 24/7 Webhook</strong>!</li>
+            </ol>
+            <div class="code-snippet-box">
+              <div class="code-snippet-header">
+                <span>cloudflare_worker.js (Ready to Deploy)</span>
+                <button class="btn btn-sm btn-outline" id="copyWorkerCodeBtn">📋 Copy Code</button>
+              </div>
+              <div class="code-snippet-body" id="workerCodeBlock"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Method 2: Node.js on Render / Koyeb -->
+        <div class="card mt-4">
+          <h4>📦 Method 2: Node.js 24/7 Background Server (Render.com / Koyeb / VPS)</h4>
+          <p class="text-muted mt-1">This repository already includes <code>server.js</code>, <code>package.json</code>, and <code>Procfile</code> ready for 24/7 hosting:</p>
+          <div class="grid-2col mt-3">
+            <div class="step-card">
+              <div class="step-header">
+                <span class="step-num">1</span>
+                <strong>Deploy to Render.com (Free 24/7)</strong>
+              </div>
+              <p class="text-muted small-text">
+                Go to <a href="https://render.com" target="_blank" style="color: var(--primary);">render.com</a> &rarr; New Web Service &rarr; Connect your GitHub Repo &rarr; Select Environment: <strong>Node</strong> &rarr; Start Command: <code>node server.js</code>. Render will run the bot in the cloud 24/7 without needing your browser!
+              </p>
+            </div>
+            <div class="step-card">
+              <div class="step-header">
+                <span class="step-num">2</span>
+                <strong>Run Locally or on VPS / Termux</strong>
+              </div>
+              <p class="text-muted small-text">
+                Run <code>node server.js</code> in Termux or any Linux VPS. It will poll Telegram continuously in the background and respond instantly!
+              </p>
+            </div>
           </div>
         </div>
       </section>

@@ -712,3 +712,132 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* 24/7 Cloud Host & Webhook Styles */
+.alert-cloud-banner {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(239, 68, 68, 0.08));
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.alert-cloud-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alert-cloud-icon {
+  font-size: 26px;
+}
+
+.alert-cloud-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--warning);
+}
+
+.alert-cloud-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.webhook-status-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.webhook-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.webhook-stat-item {
+  background: var(--bg-card);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.webhook-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.webhook-stat-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  word-break: break-all;
+  margin-top: 4px;
+}
+
+.code-snippet-box {
+  background: var(--bg-terminal);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.code-snippet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.code-snippet-body {
+  padding: 14px;
+  max-height: 280px;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #38bdf8;
+  white-space: pre;
+}
+
+.step-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: var(--primary);
+  color: #000;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 12px;
+}
+

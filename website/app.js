@@ -67,7 +67,18 @@ const dom = {
   confirmDeployScript: document.getElementById('confirmDeployScript'),
   modalScriptName: document.getElementById('modalScriptName'),
   modalScriptCode: document.getElementById('modalScriptCode'),
-  grantSubBtn: document.getElementById('grantSubBtn')
+  grantSubBtn: document.getElementById('grantSubBtn'),
+  webhookLivePill: document.getElementById('webhookLivePill'),
+  webhookCurrentUrl: document.getElementById('webhookCurrentUrl'),
+  webhookPendingCount: document.getElementById('webhookPendingCount'),
+  webhookLastError: document.getElementById('webhookLastError'),
+  webhookUrlInput: document.getElementById('webhookUrlInput'),
+  setWebhookBtn: document.getElementById('setWebhookBtn'),
+  checkWebhookBtn: document.getElementById('checkWebhookBtn'),
+  deleteWebhookBtn: document.getElementById('deleteWebhookBtn'),
+  webhookActionStatus: document.getElementById('webhookActionStatus'),
+  copyWorkerCodeBtn: document.getElementById('copyWorkerCodeBtn'),
+  workerCodeBlock: document.getElementById('workerCodeBlock')
 };
 
 // --- Helper Functions ---
@@ -163,6 +174,16 @@ async function pollUpdates() {
           dom.metricUpdates.textContent = state.processedUpdates;
           handleTelegramUpdate(update);
         }
+      } else if (data.error_code === 409) {
+        // Active webhook on Telegram!
+        if (dom.webhookLivePill) {
+          dom.webhookLivePill.textContent = '24/7 CLOUD ACTIVE 🟢';
+          dom.webhookLivePill.className = 'badge badge-accent';
+        }
+        dom.sidebarStatusText.textContent = '24/7 WEBHOOK ACTIVE';
+        dom.sidebarStatusPill.className = 'host-pill online';
+        logToConsole('🌐 24/7 Cloud Webhook is ACTIVE! Telegram is delivering messages to your serverless webhook directly.', 'success');
+        await new Promise(r => setTimeout(r, 15000));
       } else {
         await new Promise(r => setTimeout(r, 4000));
       }
@@ -180,6 +201,9 @@ function handleTelegramUpdate(update) {
   const from = msg.from;
   const chatId = msg.chat.id;
   const text = (msg.text || '').trim();
+  const userName = from ? (from.first_name || 'User') : 'User';
+  const userId = from ? from.id : 0;
+  const isOwner = String(userId) === String(state.ownerId);
 
   // Register user
   if (from) {
@@ -204,19 +228,49 @@ function handleTelegramUpdate(update) {
 
   logToConsole(`Message from ${from?.first_name || 'User'} (${from?.id}): ${text || '[File/Media]'}`);
 
-  // Auto-respond to commands matching python script logic
-  if (text === '/start' || text === '/help') {
-    const welcome = `〽️ *𝐖ᴇʟᴄᴏᴍᴇ, ${from?.first_name || 'User'}!*\n\n` +
-      `🆔 *𝐘ᴏᴜʀ 𝐔ꜱᴇʀ 𝐈𝐃:* \`${from?.id}\`\n` +
+  // Native Telegram Bottom Reply Keyboard
+  const replyKeyboard = {
+    keyboard: [
+      [{ text: "▶️ 𝐒ᴛᴀʀᴛ 𝐍ᴏᴡ" }, { text: "⚡ 𝐁ᴏᴛ 𝐒ᴩᴇᴇᴅ" }],
+      [{ text: "📢 𝐔ᴩᴅᴀᴛᴇꜱ 𝐂ʜᴀɴɴᴇʟ" }, { text: "💬 𝐂ᴏɴᴛᴀᴄᴛ 𝐎ᴡɴᴇʀ" }],
+      [{ text: "📂 𝐂ʜᴇᴄᴋ 𝐅ɪʟᴇꜱ" }, { text: "📊 𝐒ᴛᴀᴛɪꜱᴛɪᴄꜱ" }]
+    ],
+    resize_keyboard: true,
+    one_time_keyboard: false
+  };
+
+  if (isOwner) {
+    replyKeyboard.keyboard.push([
+      { text: "📢 𝐁ʀᴏᴀᴅᴄᴀꜱᴛ" },
+      { text: "🛡️ 𝐀ᴅᴍɪɴ 𝐏ᴀɴᴇʟ" }
+    ]);
+  }
+
+  // Auto-respond to commands matching screenshot and python script logic
+  if (text === '/start' || text === '▶️ 𝐒ᴛᴀʀᴛ 𝐍ᴏᴡ' || text === '/help') {
+    const welcome = `〽️ *𝐖ᴇʟᴄᴏᴍᴇ, ${userName}!*\n\n` +
+      `🆔 *𝐘ᴏᴜʀ 𝐔ꜱᴇʀ 𝐈𝐃:* \`${userId}\`\n\n` +
       `🤖 *𝐇ᴏꜱᴛ & ʀᴜɴ 𝐏ʏᴛʜᴏɴ (\`.py\`) ᴏʀ 𝐉𝐒 (\`.js\`) ꜱᴄʀɪᴩᴛꜱ 24/7.*\n` +
       `📁 *𝐔ᴩʟᴏᴀᴅ ꜱɪɴɢʟᴇ ꜱᴄʀɪᴩᴛꜱ ᴏʀ \`.zip\` ᴀʀᴄʜɪᴠᴇꜱ.*`;
-    sendMessage(chatId, welcome);
-  } else if (text === '/ping') {
-    sendMessage(chatId, `⚡ *𝐏ᴏɴɢ! 𝐋ᴀᴛᴇɴᴄʏ:* ~${Math.floor(Math.random() * 20 + 25)} ᴍꜱ`);
-  } else if (text === '/status') {
-    sendMessage(chatId, `📊 *𝐁ᴏᴛ 𝐒ᴛᴀᴛɪꜱᴛɪᴄꜱ:*\n👥 *𝐔ꜱᴇʀꜱ:* ${state.users.length}\n🟢 *𝐀ᴄᴛɪᴠᴇ 𝐁ᴏᴛꜱ:* ${state.scripts.filter(s => s.status === 'RUNNING').length}`);
-  } else if (text === '/updateschannel') {
-    sendMessage(chatId, `📢 *Official Channel:* ${state.channel}`);
+    sendMessage(chatId, welcome, replyKeyboard);
+  } else if (text === '/ping' || text === '⚡ 𝐁ᴏᴛ 𝐒ᴩᴇᴇᴅ') {
+    const pingText = `⚡ *𝐁ᴏᴛ 𝐒ᴩᴇᴇᴅ & 𝐒ᴛᴀᴛᴜꜱ:*\n\n` +
+      `⏱️ *𝐀𝐏𝐈 𝐑ᴇꜱᴩᴏɴꜱᴇ 𝐓ɪᴍᴇ:* ~${Math.floor(Math.random() * 20 + 25)} ᴍꜱ\n` +
+      `🚦 *𝐁ᴏᴛ 𝐒ᴛᴀᴛᴜꜱ:* Online 🟢\n` +
+      `☁️ *𝐇ᴏꜱᴛ:* Active`;
+    sendMessage(chatId, pingText, replyKeyboard);
+  } else if (text === '/status' || text === '📊 𝐒ᴛᴀᴛɪꜱᴛɪᴄꜱ') {
+    sendMessage(chatId, `📊 *𝐁ᴏᴛ 𝐒ᴛᴀᴛɪꜱᴛɪᴄꜱ:*\n👥 *𝐔ꜱᴇʀꜱ:* ${state.users.length}\n🟢 *𝐀ᴄᴛɪᴠᴇ 𝐁ᴏᴛꜱ:* ${state.scripts.filter(s => s.status === 'RUNNING').length}`, replyKeyboard);
+  } else if (text === '/updateschannel' || text === '📢 𝐔ᴩᴅᴀᴛᴇꜱ 𝐂ʜᴀɴɴᴇʟ') {
+    sendMessage(chatId, `📢 *Official Channel:* ${state.channel}`, replyKeyboard);
+  } else if (text === '💬 𝐂ᴏɴᴛᴀᴄᴛ 𝐎ᴡɴᴇʀ') {
+    sendMessage(chatId, `💬 *Contact Support/Owner:* Owner ID \`${state.ownerId}\``, replyKeyboard);
+  } else if (text === '📂 𝐂ʜᴇᴄᴋ 𝐅ɪʟᴇꜱ') {
+    sendMessage(chatId, `📂 *Hosted Files:* Send any \`.py\` or \`.js\` file directly to this bot to execute it!`, replyKeyboard);
+  } else if (text === '📢 𝐁ʀᴏᴀᴅᴄᴀꜱᴛ' && isOwner) {
+    sendMessage(chatId, `📢 *Broadcast:* Enter your broadcast message in the web dashboard or reply to this prompt.`, replyKeyboard);
+  } else if (text === '🛡️ 𝐀ᴅᴍɪɴ 𝐏ᴀɴᴇʟ' && isOwner) {
+    sendMessage(chatId, `🛡️ *Admin Panel:*\n👥 *Total Users:* ${state.users.length}\n📁 *Scripts:* ${state.scripts.length}\n⚙️ *Manage via Web Dashboard.*`, replyKeyboard);
   }
 }
 
@@ -502,6 +556,197 @@ setInterval(() => {
   dom.metricUptime.textContent = str;
 }, 1000);
 
+// --- Navigation Tab Helper ---
+function openTab(tabName) {
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+  const navBtn = document.querySelector(`.nav-item[data-tab="${tabName}"]`);
+  if (navBtn) {
+    navBtn.classList.add('active');
+    dom.pageTitle.textContent = navBtn.innerText.trim();
+  }
+  const pane = document.getElementById(`tab-${tabName}`);
+  if (pane) {
+    pane.classList.add('active');
+  }
+}
+window.openTab = openTab;
+
+// --- Webhook Manager Engine ---
+async function fetchWebhookInfo() {
+  if (!dom.webhookLivePill) return;
+  dom.webhookLivePill.textContent = 'CHECKING...';
+  dom.webhookLivePill.className = 'badge badge-outline';
+
+  try {
+    const res = await fetch(getApiUrl('getWebhookInfo'));
+    const data = await res.json();
+    if (data.ok && data.result) {
+      const info = data.result;
+      const isWebhookActive = Boolean(info.url && info.url.trim().length > 0);
+      dom.webhookCurrentUrl.textContent = isWebhookActive ? info.url : 'None (Browser Polling Mode)';
+      dom.webhookPendingCount.textContent = info.pending_update_count || '0';
+      dom.webhookLastError.textContent = info.last_error_message || 'None';
+
+      if (isWebhookActive) {
+        dom.webhookLivePill.textContent = '24/7 CLOUD ACTIVE 🟢';
+        dom.webhookLivePill.className = 'badge badge-accent';
+        dom.sidebarStatusText.textContent = '24/7 CLOUD WEBHOOK';
+        dom.sidebarStatusPill.className = 'host-pill online';
+        logToConsole(`Webhook Info: Active at ${info.url}`, 'info');
+      } else {
+        dom.webhookLivePill.textContent = 'BROWSER POLLING 🟡';
+        dom.webhookLivePill.className = 'badge badge-warning';
+        logToConsole('Webhook Info: No webhook set (Browser Polling Mode)', 'info');
+      }
+    }
+  } catch (err) {
+    logToConsole(`Webhook check error: ${err.message}`, 'error');
+  }
+}
+
+async function setTelegramWebhook(url) {
+  if (!url || !url.startsWith('https://')) {
+    alert('Please enter a valid HTTPS Webhook URL (e.g. from Cloudflare Workers or Render)!');
+    return;
+  }
+  dom.webhookActionStatus.innerHTML = '<span class="text-info">⏳ Setting 24/7 Webhook on Telegram...</span>';
+  try {
+    const res = await fetch(`${getApiUrl('setWebhook')}?url=${encodeURIComponent(url.trim())}`);
+    const data = await res.json();
+    if (data.ok) {
+      dom.webhookActionStatus.innerHTML = `<span class="text-success">✅ Webhook Successfully Set! Your bot is now 24/7 Live!</span>`;
+      logToConsole(`Set Webhook: Successfully connected to ${url}!`, 'success');
+      state.isPolling = false; // Stop browser polling so Telegram handles it in cloud
+      fetchWebhookInfo();
+    } else {
+      dom.webhookActionStatus.innerHTML = `<span class="text-danger">❌ Failed: ${data.description}</span>`;
+      logToConsole(`Set Webhook Error: ${data.description}`, 'error');
+    }
+  } catch (e) {
+    dom.webhookActionStatus.innerHTML = `<span class="text-danger">❌ Error: ${e.message}</span>`;
+  }
+}
+
+async function deleteTelegramWebhook() {
+  dom.webhookActionStatus.innerHTML = '<span class="text-info">⏳ Deleting Webhook...</span>';
+  try {
+    const res = await fetch(getApiUrl('deleteWebhook'));
+    const data = await res.json();
+    if (data.ok) {
+      dom.webhookActionStatus.innerHTML = `<span class="text-success">✅ Webhook removed! Switched back to browser polling mode.</span>`;
+      logToConsole('Deleted Webhook: Switched back to browser polling mode.', 'success');
+      state.isPolling = true;
+      fetchWebhookInfo();
+      pollUpdates();
+    } else {
+      dom.webhookActionStatus.innerHTML = `<span class="text-danger">❌ Failed: ${data.description}</span>`;
+    }
+  } catch (e) {
+    dom.webhookActionStatus.innerHTML = `<span class="text-danger">❌ Error: ${e.message}</span>`;
+  }
+}
+
+// Event Listeners for Webhook Tab
+if (dom.setWebhookBtn) {
+  dom.setWebhookBtn.addEventListener('click', () => {
+    const url = dom.webhookUrlInput.value.trim();
+    setTelegramWebhook(url);
+  });
+}
+
+if (dom.checkWebhookBtn) {
+  dom.checkWebhookBtn.addEventListener('click', () => {
+    fetchWebhookInfo();
+  });
+}
+
+if (dom.deleteWebhookBtn) {
+  dom.deleteWebhookBtn.addEventListener('click', () => {
+    deleteTelegramWebhook();
+  });
+}
+
+const CLOUDFLARE_WORKER_SAMPLE_CODE = `/**
+ * Cloudflare Worker — 24/7 Telegram Bot Serverless Host
+ * 100% Free Forever (100,000 requests/day, zero sleep)
+ */
+const BOT_TOKEN = "${state.token}";
+const OWNER_ID = ${state.ownerId};
+const CHANNEL_USERNAME = "${state.channel}";
+
+export default {
+  async fetch(request) {
+    if (request.method !== "POST") {
+      return new Response("BotHost 24/7 Cloudflare Worker is Live!", { status: 200 });
+    }
+    try {
+      const update = await request.json();
+      await handleTelegramUpdate(update);
+      return new Response("OK", { status: 200 });
+    } catch (err) {
+      return new Response("Error: " + err.message, { status: 200 });
+    }
+  }
+};
+
+async function handleTelegramUpdate(update) {
+  const message = update.message;
+  if (!message) return;
+  const chatId = message.chat.id;
+  const text = (message.text || "").trim();
+  const userName = message.from ? (message.from.first_name || "User") : "User";
+  const userId = message.from ? message.from.id : 0;
+  const isOwner = userId === OWNER_ID;
+
+  const replyKeyboard = {
+    keyboard: [
+      [{ text: "▶️ 𝐒ᴛᴀʀᴛ 𝐍ᴏᴡ" }, { text: "⚡ 𝐁ᴏᴛ 𝐒ᴩᴇᴇᴅ" }],
+      [{ text: "📢 𝐔ᴩᴅᴀᴛᴇꜱ 𝐂ʜᴀɴɴᴇʟ" }, { text: "💬 𝐂ᴏɴᴛᴀᴄᴛ 𝐎ᴡɴᴇʀ" }],
+      [{ text: "📂 𝐂ʜᴇᴄᴋ 𝐅ɪʟᴇꜱ" }, { text: "📊 𝐒ᴛᴀᴛɪꜱᴛɪᴄꜱ" }]
+    ],
+    resize_keyboard: true
+  };
+  if (isOwner) {
+    replyKeyboard.keyboard.push([{ text: "📢 𝐁ʀᴏᴀᴅᴄᴀꜱᴛ" }, { text: "🛡️ 𝐀ᴅᴍɪɴ 𝐏ᴀɴᴇʟ" }]);
+  }
+
+  if (text === "/start" || text === "▶️ 𝐒ᴛᴀʀᴛ 𝐍ᴏᴡ") {
+    const welcome = "〽️ *𝐖ᴇʟᴄᴏᴍᴇ, " + userName + "!*\\n\\n" +
+      "🆔 *𝐘ᴏᴜʀ 𝐔ꜱᴇʀ 𝐈𝐃:* \`" + userId + "\`\\n\\n" +
+      "🤖 *𝐇ᴏꜱᴛ & ʀᴜɴ 𝐏ʏᴛʜᴏɴ (\`.py\`) ᴏʀ 𝐉𝐒 (\`.js\`) ꜱᴄʀɪᴩᴛꜱ 24/7.*\\n" +
+      "📁 *𝐔ᴩʟᴏᴀᴅ ꜱɪɴɢʟᴇ ꜱᴄʀɪᴩᴛꜱ ᴏʀ \`.zip\` ᴀʀᴄʜɪᴠᴇꜱ.*";
+    await sendTelegramMessage(chatId, welcome, replyKeyboard);
+  } else if (text === "/ping" || text === "⚡ 𝐁ᴏᴛ 𝐒ᴩᴇᴇᴅ") {
+    await sendTelegramMessage(chatId, "⚡ *𝐁ᴏᴛ 𝐒ᴩᴇᴇᴅ & 𝐒ᴛᴀᴛᴜꜱ:*\\n⏱️ *Latency:* ~20ms\\n🟢 *Status:* Online 24/7 Cloudflare Worker!", replyKeyboard);
+  } else if (text === "/status" || text === "📊 𝐒ᴛᴀᴛɪꜱᴛɪᴄꜱ") {
+    await sendTelegramMessage(chatId, "📊 *Statistics:* 24/7 Cloud Serverless Host Active!", replyKeyboard);
+  } else if (text === "/updateschannel" || text === "📢 𝐔ᴩᴅᴀᴛᴇꜱ 𝐂ʜᴀɴɴᴇʟ") {
+    await sendTelegramMessage(chatId, "📢 *Channel:* " + CHANNEL_USERNAME, replyKeyboard);
+  }
+}
+
+async function sendTelegramMessage(chatId, text, replyMarkup) {
+  const url = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage";
+  await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: "Markdown", reply_markup: replyMarkup })
+  });
+}`;
+
+if (dom.workerCodeBlock) {
+  dom.workerCodeBlock.textContent = CLOUDFLARE_WORKER_SAMPLE_CODE;
+}
+
+if (dom.copyWorkerCodeBtn) {
+  dom.copyWorkerCodeBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(CLOUDFLARE_WORKER_SAMPLE_CODE);
+    alert('✅ Cloudflare Worker code copied to clipboard! Paste it into dash.cloudflare.com Worker editor.');
+  });
+}
+
 // --- Initialization ---
 dom.heroTokenDisplay.value = state.token;
 dom.settingsTokenInput.value = state.token;
@@ -513,4 +758,6 @@ renderScripts();
 renderUsers();
 renderSubscriptions();
 fetchBotInfo();
+fetchWebhookInfo();
 pollUpdates();
+

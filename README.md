@@ -1,6 +1,6 @@
-# ⚡ BotHost 24/7 — Telegram Bot Cloud Host
+# ⚡ BotHost 24/7 — Telegram Bot Cloud Host & Webhook Platform
 
-A complete, high-performance Telegram Bot Hosting Platform with a responsive Web Dashboard, 24/7 keep-alive background engine, script manager (Python `.py`, Node.js `.js`, and `.zip` archives), broadcast tool, user subscriptions manager, and live terminal console.
+A complete, high-performance Telegram Bot Hosting Platform with a responsive Web Dashboard, Cloudflare Worker Serverless Webhook (24/7 always on), Node.js server (`server.js`), script manager, broadcast tool, and live terminal console.
 
 Pre-configured with Bot Token:
 ```
@@ -9,46 +9,44 @@ Pre-configured with Bot Token:
 
 ---
 
-## 🚀 How to Host on GitHub Pages (Free 24/7)
+## ⚠️ Important: Why does GitHub Pages stop when you close the browser tab?
 
-You can host this website directly on GitHub Pages with zero server costs:
-
-1. **Create a GitHub Repository:**
-   - Go to [github.com/new](https://github.com/new)
-   - Name your repository (e.g., `bothost-web`)
-   - Keep it **Public** and create it.
-
-2. **Push the Files to GitHub:**
-   ```bash
-   git init
-   git add index.html style.css app.js README.md
-   git commit -m "Deploy BotHost 24/7 Web App"
-   git branch -M main
-   git remote add origin https://github.com/<YOUR_USERNAME>/bothost-web.git
-   git push -u origin main
-   ```
-
-3. **Enable GitHub Pages:**
-   - Open your repository on GitHub.
-   - Go to **Settings** &rarr; **Pages** (in the left sidebar).
-   - Under **Build and deployment** &rarr; **Branch**, choose `main` and root `/`.
-   - Click **Save**.
-
-4. **Your Website is LIVE!**
-   - In 1 minute, GitHub will give you your live URL:
-   ```
-   https://<YOUR_USERNAME>.github.io/bothost-web/
-   ```
-   - It will run 24/7 directly in the cloud!
+**GitHub Pages is a Static Host.** 
+- While your browser tab is open, the browser polls Telegram via JavaScript.
+- As soon as you **close the browser tab** or **lock your phone**, the browser stops running JavaScript, so Telegram updates stop.
 
 ---
 
-## 🌟 Key Features
+## 🚀 How to Make the Bot Run 24/7 Always (Even when tab/browser is closed)
 
-- **Direct Telegram Bot API Integration:** Real-time polling & message dispatch directly from browser and Android service.
-- **24/7 Non-Stop Hosting:** Foreground Service, WakeLock, and Keep-Alive HTTP server.
-- **Hosted Bots & Scripts:** Run Python (`.py`), Node.js (`.js`), or `.zip` packages with live PID, execution logs, and restart controls.
-- **Admin & Approval System:** Approvals queue for user uploaded scripts, subscription days manager, admin promotion.
-- **Mass Broadcast Messenger:** Send announcements to all active users with confirmation.
-- **Live Terminal Console:** Streaming event logs with search, filter, and export.
-- **Ping / Latency Speedometer:** Real-time response time diagnostics.
+### Option 1: Cloudflare Worker 24/7 Serverless Webhook (100% Free Forever) — ⭐ RECOMMENDED
+
+Cloudflare Workers run in the cloud 24/7 with zero sleep and 100,000 free requests per day.
+
+1. Open [workers.cloudflare.com](https://workers.cloudflare.com) and log in.
+2. Click **Create Application** &rarr; **Create Worker** &rarr; **Deploy**.
+3. Click **Edit code**, delete existing code, and paste the contents of `cloudflare_worker.js`.
+4. Click **Deploy**.
+5. Copy your worker link (e.g. `https://bothost.yourname.workers.dev`).
+6. In your web dashboard, go to the **🌐 24/7 Cloud & Webhook** tab, paste your worker URL, and click **⚡ Set 24/7 Webhook**!
+7. **Done!** Telegram will now deliver messages directly to your Cloudflare Worker 24/7, completely free, with zero browser or server needed!
+
+---
+
+### Option 2: Render.com / Koyeb (Free Node.js 24/7 Server)
+
+This repository includes `server.js`, `package.json`, and `Procfile`.
+
+1. Push this repo to GitHub.
+2. Go to [render.com](https://render.com) &rarr; **New Web Service** &rarr; Connect your GitHub Repo.
+3. Build command: `npm install` (or blank)
+4. Start command: `node server.js`
+5. Render will run the bot continuously 24/7 in the cloud!
+
+---
+
+### Option 3: Host Web Dashboard on GitHub Pages
+
+1. Push `index.html`, `style.css`, and `app.js` to GitHub.
+2. Go to **Settings** &rarr; **Pages** &rarr; Source: **Deploy from main / root**.
+3. Use this web dashboard to monitor your bot, view registered users, test commands, and manage your 24/7 Webhook!
