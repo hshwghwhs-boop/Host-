@@ -430,7 +430,10 @@ class TelegramBotEngine(
             }
             data == "back_to_main" -> {
                 apiClient.answerCallbackQuery(callback.id)
-                sendWelcome(userId, chatId, user.firstName ?: "User", user.username, messageId)
+                if (messageId != 0L) {
+                    apiClient.deleteMessage(chatId, messageId)
+                }
+                sendWelcome(userId, chatId, user.firstName ?: "User", user.username)
             }
             data.startsWith("file_") -> {
                 // file_{userId}_{fileName}
@@ -656,15 +659,8 @@ class TelegramBotEngine(
                 "   𝐔ᴩʟᴏᴀᴅ ꜱɪɴɢʟᴇ ꜱᴄʀɪᴩᴛꜱ ᴏʀ `.zip` ᴀʀᴄʜɪᴠᴇꜱ.\n\n" +
                 "👇 𝐔ꜱᴇ ʙᴜᴛᴛᴏɴꜱ ᴏʀ ᴛʏᴩᴇ ᴄᴏᴍᴍᴀɴᴅꜱ."
 
-        val inlineMarkup = createMainMenuInline(userId)
-
-        if (editMessageId != null) {
-            apiClient.editMessageText(chatId, editMessageId, welcomeText, inlineMarkup)
-        } else {
-            val replyKeyboard = createReplyKeyboard(userId)
-            apiClient.sendMessage(chatId, welcomeText, replyMarkup = replyKeyboard)
-            apiClient.sendMessage(chatId, "🎛️ **𝐂ᴏɴᴛʀᴏʟ 𝐏ᴀɴᴇʟ:**", replyMarkup = inlineMarkup)
-        }
+        val replyKeyboard = createReplyKeyboard(userId)
+        apiClient.sendMessage(chatId, welcomeText, replyMarkup = replyKeyboard)
     }
 
     private suspend fun sendUpdatesChannel(chatId: Long) {
@@ -808,9 +804,8 @@ class TelegramBotEngine(
                 "🚦 𝐁ᴏᴛ 𝐒ᴛᴀᴛᴜꜱ: $status\n" +
                 "👤 𝐘ᴏᴜʀ 𝐋ᴇᴠᴇʟ: $userLevel"
 
-        val markup = createMainMenuInline(userId)
-        if (editMessageId != null) apiClient.editMessageText(chatId, editMessageId, text, markup)
-        else apiClient.sendMessage(chatId, text, replyMarkup = markup)
+        if (editMessageId != null) apiClient.editMessageText(chatId, editMessageId, text)
+        else apiClient.sendMessage(chatId, text)
     }
 
     private suspend fun sendStatistics(userId: Long, chatId: Long) {
@@ -1016,58 +1011,6 @@ class TelegramBotEngine(
         return 3
     }
 
-    private suspend fun createMainMenuInline(userId: Long): InlineKeyboardMarkup {
-        val channelName = preferences.updateChannel.removePrefix("@")
-        val ownerHandle = preferences.ownerUsername.removePrefix("@")
-        val isAdm = isAdmin(userId)
-
-        val rows = mutableListOf<List<InlineKeyboardButton>>()
-        rows.add(listOf(InlineKeyboardButton("📢 𝐔ᴩᴅᴀᴛᴇꜱ 𝐂ʜᴀɴɴᴇʟ", callbackData = "updates_channel")))
-        rows.add(
-            listOf(
-                InlineKeyboardButton("📤 𝐔ᴩʟᴏᴀᴅ 𝐅ɪʟᴇ", callbackData = "upload"),
-                InlineKeyboardButton("📂 𝐂ʜᴇᴄᴋ 𝐅ɪʟᴇꜱ", callbackData = "check_files")
-            )
-        )
-
-        if (isAdm) {
-            rows.add(
-                listOf(
-                    InlineKeyboardButton("⚡ 𝐁ᴏᴛ 𝐒ᴩᴇᴇᴅ", callbackData = "speed"),
-                    InlineKeyboardButton("💳 𝐒ᴜʙꜱᴄʀɪᴩᴛɪᴏɴꜱ", callbackData = "subscription")
-                )
-            )
-            rows.add(
-                listOf(
-                    InlineKeyboardButton("📊 𝐒ᴛᴀᴛɪꜱᴛɪᴄꜱ", callbackData = "stats"),
-                    InlineKeyboardButton("📢 𝐁ʀᴏᴀᴅᴄᴀꜱᴛ", callbackData = "broadcast")
-                )
-            )
-            val lockBtn = if (preferences.isBotLocked) "🔓 𝐔ɴʟᴏᴄᴋ 𝐁ᴏᴛ" else "🔒 𝐋ᴏᴄᴋ 𝐁ᴏᴛ"
-            rows.add(
-                listOf(
-                    InlineKeyboardButton(lockBtn, callbackData = if (preferences.isBotLocked) "unlock_bot" else "lock_bot"),
-                    InlineKeyboardButton("🟢 𝐑ᴜɴ 𝐀ʟʟ 𝐔ꜱᴇʀ 𝐒ᴄʀɪᴩᴛꜱ", callbackData = "run_all_scripts")
-                )
-            )
-            rows.add(
-                listOf(
-                    InlineKeyboardButton("⏳ 𝐏ᴇɴᴅɪɴɢ 𝐅ɪʟᴇꜱ", callbackData = "pending_files"),
-                    InlineKeyboardButton("👑 𝐀ᴅᴍɪɴ 𝐏ᴀɴᴇʟ", callbackData = "admin_panel")
-                )
-            )
-        } else {
-            rows.add(
-                listOf(
-                    InlineKeyboardButton("⚡ 𝐁ᴏᴛ 𝐒ᴩᴇᴇᴅ", callbackData = "speed"),
-                    InlineKeyboardButton("📊 𝐒ᴛᴀᴛɪꜱᴛɪᴄꜱ", callbackData = "stats")
-                )
-            )
-        }
-
-        rows.add(listOf(InlineKeyboardButton("📞 𝐂ᴏɴᴛᴀᴄᴛ 𝐎ᴡɴᴇʀ", url = "https://t.me/$ownerHandle")))
-        return InlineKeyboardMarkup(rows)
-    }
 
     private suspend fun createReplyKeyboard(userId: Long): ReplyKeyboardMarkup {
         val isAdm = isAdmin(userId)

@@ -181,6 +181,7 @@ function handleTelegramUpdate(update) {
   const chatId = msg.chat.id;
   const text = (msg.text || '').trim();
 
+  // Register user
   if (from) {
     let existing = state.users.find(u => u.id === from.id);
     if (!existing) {
@@ -203,6 +204,7 @@ function handleTelegramUpdate(update) {
 
   logToConsole(`Message from ${from?.first_name || 'User'} (${from?.id}): ${text || '[File/Media]'}`);
 
+  // Auto-respond to commands matching python script logic
   if (text === '/start' || text === '/help') {
     const welcome = `〽️ *𝐖ᴇʟᴄᴏᴍᴇ, ${from?.first_name || 'User'}!*\n\n` +
       `🆔 *𝐘ᴏᴜʀ 𝐔ꜱᴇʀ 𝐈𝐃:* \`${from?.id}\`\n` +
@@ -218,6 +220,7 @@ function handleTelegramUpdate(update) {
   }
 }
 
+// --- Render Functions ---
 function renderScripts() {
   dom.scriptsContainer.innerHTML = '';
   state.scripts.forEach(script => {
@@ -287,6 +290,7 @@ function renderSubscriptions() {
   `).join('');
 }
 
+// Script actions
 window.toggleScript = function(id) {
   const script = state.scripts.find(s => s.id === id);
   if (!script) return;
@@ -345,6 +349,7 @@ window.simulateCommand = function(cmd) {
   });
 };
 
+// --- Tab Switching ---
 document.querySelectorAll('.nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -357,6 +362,7 @@ document.querySelectorAll('.nav-item').forEach(btn => {
   });
 });
 
+// Subtabs
 document.querySelectorAll('.subtab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
@@ -367,6 +373,7 @@ document.querySelectorAll('.subtab-btn').forEach(btn => {
   });
 });
 
+// --- Modal Handlers ---
 dom.deployScriptBtn.addEventListener('click', () => {
   dom.scriptModal.classList.add('active');
 });
@@ -394,6 +401,7 @@ dom.confirmDeployScript.addEventListener('click', () => {
   logToConsole(`Deployed & Started: ${name} (PID: ${newScript.pid})`, 'success');
 });
 
+// --- Broadcast Sender ---
 dom.sendBroadcastBtn.addEventListener('click', async () => {
   const text = dom.broadcastInput.value.trim();
   if (!text) return;
@@ -413,6 +421,7 @@ dom.sendBroadcastBtn.addEventListener('click', async () => {
   logToConsole(`Broadcast completed: ${sent} delivered.`, 'success');
 });
 
+// --- Token Reveal / Settings ---
 dom.revealTokenBtn.addEventListener('click', () => {
   if (dom.heroTokenDisplay.type === 'password') {
     dom.heroTokenDisplay.type = 'text';
@@ -440,6 +449,7 @@ dom.saveSettingsBtn.addEventListener('click', () => {
   alert('Settings saved successfully!');
 });
 
+// Toggle polling button
 dom.toggleHostBtn.addEventListener('click', () => {
   state.isPolling = !state.isPolling;
   if (state.isPolling) {
@@ -456,6 +466,7 @@ dom.toggleHostBtn.addEventListener('click', () => {
   }
 });
 
+// Clear & copy console
 dom.clearConsoleBtn.addEventListener('click', () => {
   dom.terminalOutput.innerHTML = '';
 });
@@ -464,6 +475,7 @@ dom.copyConsoleBtn.addEventListener('click', () => {
   alert('Console logs copied to clipboard!');
 });
 
+// Grant sub button
 dom.grantSubBtn.addEventListener('click', () => {
   const uid = prompt('Enter User Telegram ID to grant 30 days subscription:');
   if (uid) {
@@ -479,6 +491,7 @@ dom.grantSubBtn.addEventListener('click', () => {
   }
 });
 
+// --- Uptime Timer ---
 setInterval(() => {
   const diffSec = Math.floor((Date.now() - state.startTime) / 1000);
   const h = String(Math.floor(diffSec / 3600)).padStart(2, '0');
@@ -489,6 +502,7 @@ setInterval(() => {
   dom.metricUptime.textContent = str;
 }, 1000);
 
+// --- Initialization ---
 dom.heroTokenDisplay.value = state.token;
 dom.settingsTokenInput.value = state.token;
 dom.settingsOwnerId.value = state.ownerId;
