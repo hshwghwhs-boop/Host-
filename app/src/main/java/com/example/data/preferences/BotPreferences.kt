@@ -65,7 +65,7 @@ class BotPreferences(context: Context) {
         private const val KEY_HTTP_ENABLED = "http_enabled"
 
         // Default credentials from user
-        const val DEFAULT_TOKEN = "8833720419:AAGXdASdwBFpgbsr0LY1hDGW9kY_hOJ9ksk"
+        const val DEFAULT_TOKEN = "8893974995:AAGnwSeD3jarEHUjwpE6_wWLGzHZ4G7JGlM"
         const val DEFAULT_OWNER_ID = 8714511542L
         const val DEFAULT_ADMIN_ID = 8714511542L
         const val DEFAULT_OWNER_USERNAME = "@ll_DARK_GETO_ll"

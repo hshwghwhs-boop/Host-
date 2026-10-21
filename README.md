@@ -4,7 +4,7 @@ A complete, high-performance Telegram Bot Hosting Platform with a responsive Web
 
 Pre-configured with Bot Token:
 ```
-8833720419:AAGXdASdwBFpgbsr0LY1hDGW9kY_hOJ9ksk
+8893974995:AAGnwSeD3jarEHUjwpE6_wWLGzHZ4G7JGlM
 ```
 
 ---
