@@ -1,0 +1,9 @@
+node_modules
+app
+build
+.gradle
+.git
+.aistudio
+public
+gradle
+*.zip

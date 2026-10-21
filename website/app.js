@@ -1,11 +1,11 @@
 /**
  * BotHost 24/7 — Telegram Bot Cloud Web Engine
- * Token: 8893974995:AAGnwSeD3jarEHUjwpE6_wWLGzHZ4G7JGlM
+ * Token: 8947132654:AAGOgHJgfFiYZxxX4HD-Lu8vhgn038FgU9w
  */
 
 // --- Global State ---
 const state = {
-  token: localStorage.getItem('bothost_token') || '8893974995:AAGnwSeD3jarEHUjwpE6_wWLGzHZ4G7JGlM',
+  token: localStorage.getItem('bothost_token') || '8947132654:AAGOgHJgfFiYZxxX4HD-Lu8vhgn038FgU9w',
   ownerId: localStorage.getItem('bothost_owner_id') || '8714511542',
   adminId: localStorage.getItem('bothost_admin_id') || '8714511542',
   channel: localStorage.getItem('bothost_channel') || '@geto_bot_hub',

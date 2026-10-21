@@ -5,7 +5,7 @@
 
 const https = require('https');
 
-const TOKEN = process.env.BOT_TOKEN || '8893974995:AAGnwSeD3jarEHUjwpE6_wWLGzHZ4G7JGlM';
+const TOKEN = process.env.BOT_TOKEN || '8947132654:AAGOgHJgfFiYZxxX4HD-Lu8vhgn038FgU9w';
 const OWNER_ID = parseInt(process.env.OWNER_ID || '8714511542', 10);
 const CHANNEL = process.env.CHANNEL || '@geto_bot_hub';
 

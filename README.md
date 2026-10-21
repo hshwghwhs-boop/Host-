@@ -4,8 +4,9 @@ A complete, high-performance Telegram Bot Hosting Platform with a responsive Web
 
 Pre-configured with Bot Token:
 ```
-8893974995:AAGnwSeD3jarEHUjwpE6_wWLGzHZ4G7JGlM
+8947132654:AAGOgHJgfFiYZxxX4HD-Lu8vhgn038FgU9w
 ```
+Pre-configured Worker URL: `https://host.baruahbhaskar821.workers.dev`
 
 ---
 
@@ -27,7 +28,7 @@ Cloudflare Workers run in the cloud 24/7 with zero sleep and 100,000 free reques
 2. Click **Create Application** &rarr; **Create Worker** &rarr; **Deploy**.
 3. Click **Edit code**, delete existing code, and paste the contents of `cloudflare_worker.js`.
 4. Click **Deploy**.
-5. Copy your worker link (e.g. `https://bothost.yourname.workers.dev`).
+5. Copy your worker link (e.g. `https://host.baruahbhaskar821.workers.dev`).
 6. In your web dashboard, go to the **🌐 24/7 Cloud & Webhook** tab, paste your worker URL, and click **⚡ Set 24/7 Webhook**!
 7. **Done!** Telegram will now deliver messages directly to your Cloudflare Worker 24/7, completely free, with zero browser or server needed!
 
